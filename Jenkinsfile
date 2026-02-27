@@ -33,17 +33,18 @@ pipeline {
         stage('Deploy to EC2') {
             steps {
                 sshagent(['ec2-ssh']) {
-                    sh '''
-                    ssh -o StrictHostKeyChecking=no ubuntu@$EC2_IP << EOF
+                    sh """
+                    ssh -o StrictHostKeyChecking=no ubuntu@$EC2_IP '
                     docker pull tharunrajravi/skyalert-backend:latest
                     docker pull tharunrajravi/skyalert-frontend:latest
                     docker rm -f backend frontend || true
                     docker run -d -p 5000:5000 --name backend tharunrajravi/skyalert-backend
                     docker run -d -p 3000:3000 --name frontend tharunrajravi/skyalert-frontend
-                    EOF
-                    '''
+                    '
+                    """
                 }
             }
         }
+        
     }
 }
