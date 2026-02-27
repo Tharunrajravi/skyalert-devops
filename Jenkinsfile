@@ -5,12 +5,12 @@ pipeline {
         DOCKERHUB_CREDS = credentials('dockerhub-creds')
         IMAGE_BACKEND = "tharunrajravi/skyalert-backend"
         IMAGE_FRONTEND = "tharunrajravi/skyalert-frontend"
-        EC2_IP = "13.232.97.192"
+        EC2_IP = "13.235.45.139"
     }
 
     stages {
 
-        stage('Build Docker Images') {
+        stage('Build Images') {
             steps {
                 sh 'docker build -t $IMAGE_BACKEND ./backend'
                 sh 'docker build -t $IMAGE_FRONTEND ./frontend'
@@ -37,13 +37,7 @@ pipeline {
                     ssh -o StrictHostKeyChecking=no ubuntu@$EC2_IP << EOF
                     docker pull tharunrajravi/skyalert-backend:latest
                     docker pull tharunrajravi/skyalert-frontend:latest
-
-                    docker stop backend || true
-                    docker stop frontend || true
-
-                    docker rm backend || true
-                    docker rm frontend || true
-
+                    docker rm -f backend frontend || true
                     docker run -d -p 5000:5000 --name backend tharunrajravi/skyalert-backend
                     docker run -d -p 3000:3000 --name frontend tharunrajravi/skyalert-frontend
                     EOF
