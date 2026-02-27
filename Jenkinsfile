@@ -5,7 +5,7 @@ pipeline {
         DOCKERHUB_CREDS = credentials('dockerhub-creds')
         IMAGE_BACKEND = "tharunrajravi/skyalert-backend"
         IMAGE_FRONTEND = "tharunrajravi/skyalert-frontend"
-        EC2_IP = "13.235.45.139"
+        EC2_IP = "13.201.101.78"
     }
 
     stages {
