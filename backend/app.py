@@ -1,8 +1,7 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-import time
 
-# Existing alerts storage
+# In-memory storage (for now)
 alerts = []
 
 # Auth imports
@@ -62,8 +61,15 @@ def login():
 # 🌦 ALERT ROUTES
 # =========================
 
+# Used by FRONTEND
 @app.route("/alerts", methods=["GET"])
 def get_alerts():
+    return jsonify(alerts)
+
+
+# ⭐ Used by WORKER (no auth)
+@app.route("/internal/alerts", methods=["GET"])
+def internal_get_alerts():
     return jsonify(alerts)
 
 
@@ -74,9 +80,9 @@ def add_alert():
     alert = {
         "city": data["city"],
         "email": data["email"],
-        "type": data["type"],          # rain OR temp
+        "type": data["type"],       # rain OR temp
         "threshold": data.get("threshold"),
-        "last_sent": 0                # cooldown tracking
+        "last_sent": 0              # cooldown tracking
     }
 
     alerts.append(alert)

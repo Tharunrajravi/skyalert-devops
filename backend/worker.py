@@ -3,7 +3,7 @@ import requests
 from weather_service import will_rain, temp_above
 from email_service import send_email
 
-API_URL = "http://localhost:5000/alerts"
+API_URL = "http://backend:5000/internal/alerts"
 
 COOLDOWN = 3600  # 1 hour (change to 120 for testing)
 
