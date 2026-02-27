@@ -10,13 +10,6 @@ pipeline {
 
     stages {
 
-        stage('Clone Repo') {
-            steps {
-                git branch: 'main',
-                url: 'https://github.com/Tharunrajravi/skyalert-devops.git'
-            }
-        }
-
         stage('Build Docker Images') {
             steps {
                 sh 'docker build -t $IMAGE_BACKEND ./backend'
