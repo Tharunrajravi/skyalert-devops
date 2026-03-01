@@ -15,9 +15,9 @@ services:
     ports:
       - "5000:5000"
     env_file:
-      - ./backend/.env
+      - .env
     volumes:
-      - ./backend:/app
+      - skyalert_data:/app/data   # ⭐ DATABASE LIVES HERE
     restart: unless-stopped
 
   worker:
@@ -25,9 +25,12 @@ services:
     container_name: skyalert-worker
     command: python worker.py
     env_file:
-      - ./backend/.env
+      - .env
     volumes:
-      - ./backend:/app
+      - skyalert_data:/app/data   # ⭐ SAME DATABASE SHARED
     depends_on:
       - backend
     restart: unless-stopped
+
+volumes:
+  skyalert_data:
