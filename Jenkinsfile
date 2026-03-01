@@ -20,8 +20,8 @@ pipeline {
         stage('Build Images') {
             steps {
                 echo "Building Docker images..."
-                sh 'docker build -t $IMAGE_BACKEND ./backend'
-                sh 'docker build -t $IMAGE_FRONTEND ./frontend'
+                sh 'docker build -t $IMAGE_BACKEND:latest ./backend'
+                sh 'docker build -t $IMAGE_FRONTEND:latest ./frontend'
             }
         }
 
@@ -35,14 +35,14 @@ pipeline {
         stage('Push Images') {
             steps {
                 echo "Pushing images to DockerHub..."
-                sh 'docker push $IMAGE_BACKEND'
-                sh 'docker push $IMAGE_FRONTEND'
+                sh 'docker push $IMAGE_BACKEND:latest'
+                sh 'docker push $IMAGE_FRONTEND:latest'
             }
         }
 
         stage('Deploy to EC2') {
             steps {
-                echo "Deploying application to EC2..."
+                echo "Deploying application using Docker Compose..."
                 sshagent(['ec2-ssh']) {
                     sh """
                     ssh -o StrictHostKeyChecking=no ubuntu@$EC2_IP '
@@ -55,14 +55,14 @@ pipeline {
                     cd skyalert-devops
                     git pull origin main
 
-                    echo "Stopping old containers..."
-                    docker compose down || true
-
-                    echo "Pulling latest images from DockerHub..."
+                    echo "Pulling latest images..."
                     docker compose pull
 
-                    echo "Starting application stack..."
-                    docker compose up -d
+                    echo "Recreating application stack..."
+                    docker compose up -d --remove-orphans
+
+                    echo "Cleaning unused images..."
+                    docker image prune -f
 
                     echo "Deployment completed successfully!"
                     '
