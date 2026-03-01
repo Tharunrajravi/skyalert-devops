@@ -21,7 +21,7 @@ services:
       - ./backend/.env
     volumes:
       - ./backend:/app        # ⭐ SHARE DATABASE + CODE
-    restart: always
+    restart: unless-stopped
 
   # ⏰ Weather Worker (email sender)
   worker:
@@ -34,4 +34,4 @@ services:
       - ./backend:/app        # ⭐ SAME SHARED STORAGE
     depends_on:
       - backend
-    restart: always
+    restart: unless-stopped
