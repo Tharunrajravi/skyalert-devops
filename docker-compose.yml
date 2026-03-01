@@ -1,37 +1,33 @@
 services:
 
-  # 🌐 React Frontend
   frontend:
-    build: ./frontend
+    image: tharunrajravi/skyalert-frontend:latest
     container_name: skyalert-frontend
     ports:
       - "3000:3000"
-    stdin_open: true
-    tty: true
     depends_on:
       - backend
+    restart: unless-stopped
 
-  # 🧠 Flask Backend API
   backend:
-    build: ./backend
+    image: tharunrajravi/skyalert-backend:latest
     container_name: skyalert-backend
     ports:
       - "5000:5000"
     env_file:
       - ./backend/.env
     volumes:
-      - ./backend:/app        # ⭐ SHARE DATABASE + CODE
+      - ./backend:/app
     restart: unless-stopped
 
-  # ⏰ Weather Worker (email sender)
   worker:
-    build: ./backend
+    image: tharunrajravi/skyalert-backend:latest
     container_name: skyalert-worker
     command: python worker.py
     env_file:
       - ./backend/.env
     volumes:
-      - ./backend:/app        # ⭐ SAME SHARED STORAGE
+      - ./backend:/app
     depends_on:
       - backend
     restart: unless-stopped

@@ -6,6 +6,7 @@ pipeline {
         IMAGE_BACKEND = "tharunrajravi/skyalert-backend"
         IMAGE_FRONTEND = "tharunrajravi/skyalert-frontend"
         EC2_IP = "13.206.54.183"
+        REPO_URL = "https://github.com/Tharunrajravi/skyalert-devops.git"
     }
 
     stages {
@@ -45,30 +46,30 @@ pipeline {
                 sshagent(['ec2-ssh']) {
                     sh """
                     ssh -o StrictHostKeyChecking=no ubuntu@$EC2_IP '
-                    
+
+                    echo "Cloning or updating repository..."
+                    if [ ! -d skyalert-devops ]; then
+                        git clone $REPO_URL
+                    fi
+
+                    cd skyalert-devops
+                    git pull origin main
+
                     echo "Stopping old containers..."
-                    docker stop backend || true
-                    docker stop frontend || true
-                    
-                    echo "Removing old containers..."
-                    docker rm backend || true
-                    docker rm frontend || true
-                    
-                    echo "Pulling latest images..."
-                    docker pull $IMAGE_BACKEND:latest
-                    docker pull $IMAGE_FRONTEND:latest
-                    
-                    echo "Starting new containers..."
-                    docker run -d -p 5000:5000 --name backend $IMAGE_BACKEND:latest
-                    docker run -d -p 3000:3000 --name frontend $IMAGE_FRONTEND:latest
-                    
+                    docker compose down || true
+
+                    echo "Pulling latest images from DockerHub..."
+                    docker compose pull
+
+                    echo "Starting application stack..."
+                    docker compose up -d
+
                     echo "Deployment completed successfully!"
                     '
                     """
                 }
             }
         }
-
     }
 
     post {
