@@ -17,7 +17,7 @@ export default function LandingPage() {
       <Button
         variant="contained"
         size="large"
-        onClick={() => navigate("/login")}
+        onClick={() => navigate("/dashboard")}
       >
         Get Started
       </Button>
