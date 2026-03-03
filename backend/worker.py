@@ -3,8 +3,9 @@ import requests
 from weather_service import will_rain, temp_above
 from email_service import send_email
 
-API_URL = "http://backend:5000/internal/alerts"
-UPDATE_URL = "http://backend:5000/internal/update"
+# ✅ Use Kubernetes Service name
+API_URL = "http://skyalert-backend-service:5000/internal/alerts"
+UPDATE_URL = "http://skyalert-backend-service:5000/internal/update"
 
 COOLDOWN = 3600  # 1 hour (change to 120 for testing)
 
