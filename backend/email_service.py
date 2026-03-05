@@ -1,29 +1,29 @@
-import smtplib
+import boto3
 import os
-from email.message import EmailMessage
-from dotenv import load_dotenv
 
-load_dotenv()
+sns = boto3.client(
+    "sns",
+    region_name=os.getenv("AWS_REGION"),
+    aws_access_key_id=os.getenv("AWS_ACCESS_KEY"),
+    aws_secret_access_key=os.getenv("AWS_SECRET_KEY")
+)
 
-EMAIL_USER = os.getenv("EMAIL_USER")
-EMAIL_PASS = os.getenv("EMAIL_PASS")
+TOPIC_ARN = os.getenv("SNS_TOPIC_ARN")
 
-def send_email(to_email, city, alert_type, threshold=None):
-    msg = EmailMessage()
+def send_email(email, city, alert_type, threshold=None):
 
     if alert_type == "rain":
-        subject = f"Rain Alert for {city}"
-        body = f"Rain expected soon in {city}. Take umbrella."
+        message = f"Rain expected in {city}. Take precautions."
+        subject = "SkyAlert Rain Alert"
 
-    elif alert_type == "temp":
-        subject = f"Temperature Alert for {city}"
-        body = f"Temperature in {city} exceeded {threshold}°C."
+    else:
+        message = f"Temperature above {threshold}°C detected in {city}."
+        subject = "SkyAlert Temperature Alert"
 
-    msg["Subject"] = subject
-    msg["From"] = EMAIL_USER
-    msg["To"] = to_email
-    msg.set_content(body)
+    response = sns.publish(
+        TopicArn=TOPIC_ARN,
+        Message=message,
+        Subject=subject
+    )
 
-    with smtplib.SMTP_SSL("smtp.gmail.com", 465) as smtp:
-        smtp.login(EMAIL_USER, EMAIL_PASS)
-        smtp.send_message(msg)
+    print("SNS Notification sent:", response)

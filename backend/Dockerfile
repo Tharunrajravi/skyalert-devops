@@ -8,8 +8,7 @@ WORKDIR /app
 COPY . .
 
 # Install dependencies
-RUN pip install --no-cache-dir flask flask-cors requests python-dotenv flask-bcrypt pyjwt
-
+RUN pip install --no-cache-dir flask flask-cors requests python-dotenv psycopg2-binary boto3
 # Expose Flask port
 EXPOSE 5000
 
