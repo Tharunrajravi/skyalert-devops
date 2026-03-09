@@ -55,4 +55,4 @@ while True:
     except Exception as e:
         print("❌ Worker error:", e)
 
-    time.sleep(30)
+    time.sleep(200)
