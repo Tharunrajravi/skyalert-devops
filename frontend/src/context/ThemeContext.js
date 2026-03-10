@@ -20,7 +20,7 @@ export default function ThemeContextProvider({ children }) {
   return (
     <ColorModeContext.Provider value={{ toggleTheme }}>
       <ThemeProvider theme={theme}>
-        <CssBaseline />   {/* ⭐ THIS FIXES EVERYTHING */}
+        <CssBaseline />   
         {children}
       </ThemeProvider>
     </ColorModeContext.Provider>
